@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Competition Timer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+:root {
+    --dark-bg: #121212;
+    --dark-bg-secondary: #1e1e1e;
+    --dark-bg-tertiary: #2d2d2d;
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --accent-yellow: #ffd700;
+    --accent-green: #4caf50;
+    --accent-green-light: #6abf6e;
+    --accent-yellow-light: #ffeb3b;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --border-radius: 10px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1400px;
+    background-color: var(--dark-bg-secondary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 85vh;
+}
+
+/* Tab Navigation */
+.tab-navigation {
+    display: flex;
+    background-color: var(--dark-bg-tertiary);
+    padding: 15px 20px 0;
+    gap: 5px;
+}
+
+.tab-btn {
+    padding: 15px 25px;
+    background-color: var(--dark-bg-tertiary);
+    color: var(--text-secondary);
+    font-size: 16px;
+    font-weight: 600;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background-color: var(--dark-bg-secondary);
+    color: var(--accent-yellow);
+}
+
+.tab-btn:hover:not(.active) {
+    background-color: #252525;
+    color: var(--accent-yellow-light);
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    padding: 20px;
+    flex: 1;
+}
+
+.tab-content.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-yellow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0 auto;
+}
+
+/* Mode Selector */
+.mode-selector-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.mode-selector {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 25px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.3));
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    color: var(--accent-yellow);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mode-selector:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 215, 0, 0.4));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.mode-selector i {
+    font-size: 1.2rem;
+}
+
+.mode-text {
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* Main Container */
+.main-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 25px;
+    flex: 1;
+}
+
+/* Team Sections */
+.team-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--dark-bg-tertiary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+}
+
+#team-a-section {
+    border-left: 4px solid var(--accent-green);
+}
+
+#team-b-section {
+    border-right: 4px solid var(--accent-yellow);
+}
+
+.team-name {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 10px;
+}
+
+#team-a-name {
+    color: var(--accent-green);
+}
+
+#team-b-name {
+    color: var(--accent-yellow);
+}
+
+.score-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.score {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 4.5rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 25px;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--dark-bg);
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+#team-a-section .score {
+    border: 3px solid var(--accent-green);
+    color: var(--accent-green);
+}
+
+#team-b-section .score {
+    border: 3px solid var(--accent-yellow);
+    color: var(--accent-yellow);
+}
+
+.score-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.score-btn {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.score-btn.plus {
+    background-color: var(--accent-green);
+}
+
+.score-btn.minus {
+    background-color: #f44336;
+}
+
+.score-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.08);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.team-players {
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+    margin-top: auto;
+}
+
+.player-badges-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+    width: 100%;
+}
+
+.player-badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#team-a-section .player-badge {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.3));
+    border: 1px solid rgba(76, 175, 80, 0.4);
+    color: var(--accent-green-light);
+}
+
+#team-b-section .player-badge {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.3));
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    color: var(--accent-yellow-light);
+}
+
+.player-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Timer Section */
+.timer-section {
+    flex: 0 0 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 30px 20px;
+    background-color: var(--dark-bg-tertiary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 2px solid rgba(255, 215, 0, 0.2);
+}
+
+.timer-display {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 6rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 40px;
+    width: 480px;
+    min-width: 480px;
+    margin-bottom: 25px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--dark-bg), var(--dark-bg-secondary));
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.1);
+    color: var(--accent-yellow);
+    letter-spacing: 10px;
+    border: 3px solid rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.timer-display.countdown-warning {
+    animation: pulse-glow 1s infinite;
+    color: #f44336;
+    border-color: rgba(244, 67, 54, 0.5);
+}
+
+@keyframes pulse-glow {
+    0%, 100% { 
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(244, 67, 54, 0.3);
+    }
+    50% { 
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(244, 67, 54, 0.6);
+    }
+}
+
+/* Circular Timer Buttons */
+.timer-controls {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.timer-btn {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+    box-shadow: var(--shadow);
+    position: relative;
+    font-size: 1.8rem;
+}
+
+.timer-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+}
+
+.timer-btn.start {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));
+}
+
+.timer-btn.pause {
+    background: linear-gradient(135deg, #ff9800, #ffb74d);
+}
+
+.timer-btn.stop {
+    background: linear-gradient(135deg, #f44336, #e57373);
+}
+
+.timer-btn.reset {
+    background: linear-gradient(135deg, #2196f3, #64b5f6);
+}
+
+.timer-btn.reset-all {
+    background: linear-gradient(135deg, #9c27b0, #ba68c8);
+}
+
+/* Tooltip Styles */
+.timer-btn::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    font-weight: 500;
+}
+
+.timer-btn:hover::after {
+    opacity: 1;
+}
+
+/* Quick Time Presets */
+.quick-presets {
+    width: 100%;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.presets-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.preset-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.preset-btn {
+    padding: 12px 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.3));
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    color: var(--accent-yellow);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.preset-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 215, 0, 0.4));
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.preset-btn i {
+    margin-right: 5px;
+}
+
+/* Score History Widgets */
+.score-history-container {
+    width: 100%;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.score-history-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.score-history-display {
+    min-height: 60px;
+    max-height: 120px;
+    overflow-y: auto;
+    padding: 12px;
+    background-color: var(--dark-bg);
+    border-radius: var(--border-radius);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+#team-a-section .score-history-display {
+    color: var(--accent-green);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+#team-b-section .score-history-display {
+    color: var(--accent-yellow);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.score-history-display.empty {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Horizontal Rule Separator in Score History */
+.score-separator {
+    display: block;
+    margin: 8px 0;
+    padding: 4px 0;
+    border-bottom: 2px solid;
+    opacity: 0.5;
+}
+
+#team-a-section .score-separator {
+    border-bottom-color: var(--accent-green);
+}
+
+#team-b-section .score-separator {
+    border-bottom-color: var(--accent-yellow);
+}
+
+/* Scrollbar styling for score history */
+.score-history-display::-webkit-scrollbar {
+    width: 6px;
+}
+
+.score-history-display::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.score-history-display::-webkit-scrollbar-thumb {
+    background: rgba(255, 215, 0, 0.3);
+    border-radius: 3px;
+}
+
+.score-history-display::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 215, 0, 0.5);
+}
+
+/* Configuration Tab */
+.config-section {
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 25px;
+    background-color: var(--dark-bg-tertiary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.config-header {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-yellow);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.config-header i {
+    font-size: 1.3rem;
+}
+
+.config-group {
+    margin-bottom: 25px;
+}
+
+.config-label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.config-input,
+.config-select {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: var(--dark-bg);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.config-input:focus,
+.config-select:focus {
+    outline: none;
+    border-color: var(--accent-yellow);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.countdown-config {
+    display: none;
+}
+
+.countdown-config.active {
+    display: block;
+}
+
+.time-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.players-config {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.team-players-config {
+    background-color: var(--dark-bg);
+    padding: 20px;
+    border-radius: var(--border-radius);
+}
+
+.team-players-config h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+}
+
+#team-a-players-config h3 {
+    color: var(--accent-green);
+}
+
+#team-b-players-config h3 {
+    color: var(--accent-yellow);
+}
+
+.players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.player-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.player-input {
+    flex: 1;
+    padding: 10px 12px;
+    background-color: var(--dark-bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.player-input:focus {
+    outline: none;
+    border-color: var(--accent-yellow);
+}
+
+.remove-player-btn {
+    width: 40px;
+    height: 40px;
+    background-color: #f44336;
+    color: white;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-player-btn:hover {
+    background-color: #d32f2f;
+    transform: scale(1.05);
+}
+
+.add-player-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));
+    color: white;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.add-player-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+}
+
+.config-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.config-btn {
+    flex: 1;
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+    box-shadow: var(--shadow);
+}
+
+.config-btn.save {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));
+}
+
+.config-btn.cancel {
+    background: linear-gradient(135deg, #f44336, #e57373);
+}
+
+.config-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+}
+
+/* Export Tab */
+.export-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.export-section {
+    background-color: var(--dark-bg-tertiary);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.export-header {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-yellow);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.export-description {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.export-format-group {
+    margin-bottom: 25px;
+}
+
+.export-btn {
+    width: 100%;
+    padding: 15px 25px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+}
+
+.export-btn i {
+    font-size: 1.3rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .app-container {
+        max-width: 1200px;
+    }
+    
+    .timer-section {
+        flex: 0 0 380px;
+    }
+    
+    .timer-display {
+        font-size: 5rem;
+        padding: 35px;
+    }
+    
+    .score {
+        font-size: 4rem;
+        width: 200px;
+        height: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+    
+    .timer-section {
+        flex: 1;
+        order: -1;
+    }
+    
+    .players-config {
+        grid-template-columns: 1fr;
+    }
+    
+    .player-badges-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .timer-display {
+        font-size: 3.5rem;
+    }
+    
+    .score {
+        font-size: 3rem;
+        width: 150px;
+        height: 150px;
+    }
+    
+    .timer-controls {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .score-controls {
+        gap: 15px;
+    }
+    
+    .score-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .timer-display {
+        font-size: 2.5rem;
+        letter-spacing: 4px;
+    }
+    
+    .timer-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="timer-tab">
+                <i class="fas fa-clock"></i> Timer and Score
+            </button>
+            <button class="tab-btn" data-tab="config-tab">
+                <i class="fas fa-cog"></i> Configuration
+            </button>
+            <button class="tab-btn" data-tab="export-tab">
+                <i class="fas fa-download"></i> Export
+            </button>
+        </div>
+
+        <!-- Timer and Score Tab -->
+        <div class="tab-content active" id="timer-tab">
+            <div class="header">
+                <h1>SCQ 2026 &copy; | M. Cole</h1>
+            </div>
+            
+            <!-- Mode Selector -->
+            <div class="mode-selector-container">
+                <button class="mode-selector" id="mode-selector">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Current Section: <span class="mode-text" id="mode-text">Alternate</span></span>
+                </button>
+            </div>
+            
+            <div class="main-container">
+                <!-- Team A Section -->
+                <div class="team-section" id="team-a-section">
+                    <div class="team-name" id="team-a-name">Team A</div>
+                    <div class="score-container">
+                        <div class="score" id="team-a-score">0</div>
+                        <div class="score-controls">
+                            <button class="score-btn plus" id="team-a-plus">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="score-btn minus" id="team-a-minus">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="team-players">
+                        <h3 style="margin-bottom: 10px; font-size: 1.1rem; color: var(--text-secondary);">Players</h3>
+                        <div class="player-badges-grid" id="team-a-players-display"></div>
+                    </div>
+                    <!-- Score History Widget for Team A -->
+                    <div class="score-history-container">
+                        <div class="score-history-label">Score History</div>
+                        <div class="score-history-display empty" id="team-a-history">No score changes yet</div>
+                    </div>
+                </div>
+
+                <!-- Timer Section -->
+                <div class="timer-section">
+                    <div class="timer-display" id="timer-display">00:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn start" id="start-btn" data-tooltip="Start">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="timer-btn pause" id="pause-btn" data-tooltip="Pause">
+                            <i class="fas fa-pause"></i>
+                        </button>
+                        <button class="timer-btn stop" id="stop-btn" data-tooltip="Stop">
+                            <i class="fas fa-stop"></i>
+                        </button>
+                        <button class="timer-btn reset" id="reset-btn" data-tooltip="Reset Timer">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button class="timer-btn reset-all" id="reset-all-btn" data-tooltip="Reset All">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Quick Time Presets -->
+                    <div class="quick-presets">
+                        <div class="presets-label">Quick Time Presets</div>
+                        <div class="preset-buttons">
+                            <button class="preset-btn" id="preset-4min">
+                                <i class="fas fa-clock"></i> 4:00
+                            </button>
+                            <button class="preset-btn" id="preset-1min">
+                                <i class="fas fa-clock"></i> 1:00
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team B Section -->
+                <div class="team-section" id="team-b-section">
+                    <div class="team-name" id="team-b-name">Team B</div>
+                    <div class="score-container">
+                        <div class="score" id="team-b-score">0</div>
+                        <div class="score-controls">
+                            <button class="score-btn plus" id="team-b-plus">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="score-btn minus" id="team-b-minus">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="team-players">
+                        <h3 style="margin-bottom: 10px; font-size: 1.1rem; color: var(--text-secondary);">Players</h3>
+                        <div class="player-badges-grid" id="team-b-players-display"></div>
+                    </div>
+                    <!-- Score History Widget for Team B -->
+                    <div class="score-history-container">
+                        <div class="score-history-label">Score History</div>
+                        <div class="score-history-display empty" id="team-b-history">No score changes yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Tab -->
+        <div class="tab-content" id="config-tab">
+            <div class="config-section">
+                <div class="config-header">
+                    <i class="fas fa-sliders-h"></i>
+                    Competition Configuration
+                </div>
+                
+                <!-- Team Names -->
+                <div class="config-group">
+                    <label class="config-label">Team A Name</label>
+                    <input type="text" class="config-input" id="team-a-name-input" placeholder="Enter Team A name">
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label">Team B Name</label>
+                    <input type="text" class="config-input" id="team-b-name-input" placeholder="Enter Team B name">
+                </div>
+                
+                <!-- Timer Settings -->
+                <div class="config-group">
+                    <label class="config-label">Timer Mode</label>
+                    <select class="config-select" id="timer-mode">
+                        <option value="countdown">Countdown</option>
+                        <option value="stopwatch">Stopwatch</option>
+                    </select>
+                </div>
+                
+                <div class="config-group countdown-config active">
+                    <label class="config-label">Countdown Duration</label>
+                    <div class="time-inputs">
+                        <div>
+                            <label class="config-label" style="font-size: 0.9rem; margin-bottom: 5px;">Minutes</label>
+                            <input type="number" class="config-input" id="countdown-minutes" min="0" max="99" value="5" placeholder="Minutes">
+                        </div>
+                        <div>
+                            <label class="config-label" style="font-size: 0.9rem; margin-bottom: 5px;">Seconds</label>
+                            <input type="number" class="config-input" id="countdown-seconds" min="0" max="59" value="0" placeholder="Seconds">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Players Configuration -->
+                <div class="config-group">
+                    <label class="config-label">Team Players</label>
+                    <div class="players-config">
+                        <div class="team-players-config" id="team-a-players-config">
+                            <h3>Team A Players</h3>
+                            <div class="players-list" id="team-a-players-list">
+                                <!-- Player inputs will be added dynamically -->
+                            </div>
+                            <button class="add-player-btn" id="add-team-a-player">
+                                <i class="fas fa-plus"></i> Add Player
+                            </button>
+                        </div>
+                        
+                        <div class="team-players-config" id="team-b-players-config">
+                            <h3>Team B Players</h3>
+                            <div class="players-list" id="team-b-players-list">
+                                <!-- Player inputs will be added dynamically -->
+                            </div>
+                            <button class="add-player-btn" id="add-team-b-player">
+                                <i class="fas fa-plus"></i> Add Player
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-actions">
+                    <button class="config-btn save" id="save-config">
+                        <i class="fas fa-save"></i> Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Tab -->
+        <div class="tab-content" id="export-tab">
+            <div class="export-container">
+                <div class="export-section">
+                    <div class="export-header">
+                        <i class="fas fa-file-export"></i> Export Results
+                    </div>
+                    <div class="export-description">
+                        Export the current competition results including team scores, player names, score histories, and timer information.
+                    </div>
+                    <div class="export-format-group">
+                        <label class="config-label">Export Format</label>
+                        <select class="config-select" id="export-format">
+                            <option value="csv">CSV (Comma Separated Values)</option>
+                            <option value="json">JSON (JavaScript Object Notation)</option>
+                        </select>
+                    </div>
+                    <button class="export-btn" id="export-results">
+                        <i class="fas fa-download"></i>
+                        Download Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab Navigation
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetTab = button.getAttribute('data-tab');
+            
+            // Remove active class from all tabs and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            button.classList.add('active');
+            document.getElementById(targetTab).classList.add('active');
+        });
+    });
+    
+    // Round Mode State
+    let currentMode = 'alternate'; // 'alternate', 'minute', 'buzzer'
+    let previousMode = 'alternate'; // Track previous mode for separator insertion
+    const modes = ['alternate', 'minute', 'buzzer'];
+    const modeIcons = {
+        'alternate': 'fa-exchange-alt',
+        'minute': 'fa-hourglass-half',
+        'buzzer': 'fa-bell'
+    };
+    const modeNames = {
+        'alternate': 'Alternate',
+        'minute': 'Minute',
+        'buzzer': 'Buzzer'
+    };
+    
+    // Team data structure
+    let teams = {
+        a: {
+            name: 'Team A',
+            score: 0,
+            players: [],
+            scoreHistory: [] // Can contain numbers or '---' separators
+        },
+        b: {
+            name: 'Team B',
+            score: 0,
+            players: [],
+            scoreHistory: [] // Can contain numbers or '---' separators
+        }
+    };
+    
+    // Timer variables
+    let timerMode = 'countdown'; // 'countdown' or 'stopwatch'
+    let countdownTime = 300; // 5 minutes in seconds
+    let currentTime = countdownTime;
+    let timerInterval = null;
+    let isRunning = false;
+    
+    // DOM Elements
+    const teamAName = document.getElementById('team-a-name');
+    const teamBName = document.getElementById('team-b-name');
+    const teamAScore = document.getElementById('team-a-score');
+    const teamBScore = document.getElementById('team-b-score');
+    const timerDisplay = document.getElementById('timer-display');
+    const modeSelector = document.getElementById('mode-selector');
+    const modeText = document.getElementById('mode-text');
+    const modeSelectorIcon = modeSelector.querySelector('i');
+    
+    // Timer control buttons
+    const startBtn = document.getElementById('start-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resetAllBtn = document.getElementById('reset-all-btn');
+    
+    // Quick preset buttons
+    const preset4MinBtn = document.getElementById('preset-4min');
+    const preset1MinBtn = document.getElementById('preset-1min');
+    
+    // Score buttons
+    const teamAPlusBtn = document.getElementById('team-a-plus');
+    const teamAMinusBtn = document.getElementById('team-a-minus');
+    const teamBPlusBtn = document.getElementById('team-b-plus');
+    const teamBMinusBtn = document.getElementById('team-b-minus');
+    
+    // Score history displays
+    const teamAHistory = document.getElementById('team-a-history');
+    const teamBHistory = document.getElementById('team-b-history');
+    
+    // Configuration elements
+    const teamANameInput = document.getElementById('team-a-name-input');
+    const teamBNameInput = document.getElementById('team-b-name-input');
+    const timerModeSelect = document.getElementById('timer-mode');
+    const countdownMinutes = document.getElementById('countdown-minutes');
+    const countdownSeconds = document.getElementById('countdown-seconds');
+    const teamAPlayersList = document.getElementById('team-a-players-list');
+    const teamBPlayersList = document.getElementById('team-b-players-list');
+    const addTeamAPlayerBtn = document.getElementById('add-team-a-player');
+    const addTeamBPlayerBtn = document.getElementById('add-team-b-player');
+    const saveConfigBtn = document.getElementById('save-config');
+    
+    // Export button
+    const exportResultsBtn = document.getElementById('export-results');
+    
+    // Initialize
+    loadConfiguration();
+    updateTimerDisplay();
+    updateScoreDisplay();
+    updatePlayersDisplay();
+    updateModeDisplay();
+    
+    // Mode Selector Event Listener
+    modeSelector.addEventListener('click', () => {
+        previousMode = currentMode;
+        const currentIndex = modes.indexOf(currentMode);
+        const nextIndex = (currentIndex + 1) % modes.length;
+        currentMode = modes[nextIndex];
+        
+        // Insert separator only if there's existing score history
+        if (teams.a.scoreHistory.length > 0 && teams.a.scoreHistory[teams.a.scoreHistory.length - 1] !== '---') {
+            teams.a.scoreHistory.push('---');
+        }
+        if (teams.b.scoreHistory.length > 0 && teams.b.scoreHistory[teams.b.scoreHistory.length - 1] !== '---') {
+            teams.b.scoreHistory.push('---');
+        }
+        
+        updateModeDisplay();
+        updateScoreHistoryDisplay();
+        saveToLocalStorage();
+    });
+    
+    function updateModeDisplay() {
+        modeText.textContent = modeNames[currentMode];
+        modeSelectorIcon.className = `fas ${modeIcons[currentMode]}`;
+    }
+    
+    // Timer Control Functions
+    function startTimer() {
+        if (!isRunning) {
+            isRunning = true;
+            timerInterval = setInterval(() => {
+                if (timerMode === 'countdown') {
+                    currentTime--;
+                    if (currentTime <= 0) {
+                        currentTime = 0;
+                        stopTimer();
+                        playTimeUpSound();
+                    }
+                    if (currentTime <= 10 && currentTime > 0) {
+                        timerDisplay.classList.add('countdown-warning');
+                    }
+                } else {
+                    currentTime++;
+                }
+                updateTimerDisplay();
+                saveToLocalStorage();
+            }, 1000);
+        }
+    }
+    
+    function pauseTimer() {
+        isRunning = false;
+        clearInterval(timerInterval);
+    }
+    
+    function stopTimer() {
+        isRunning = false;
+        clearInterval(timerInterval);
+        timerDisplay.classList.remove('countdown-warning');
+    }
+    
+    function resetTimer() {
+        stopTimer();
+        if (timerMode === 'countdown') {
+            currentTime = countdownTime;
+        } else {
+            currentTime = 0;
+        }
+        updateTimerDisplay();
+        saveToLocalStorage();
+    }
+    
+    function resetAll() {
+        // Reset timer
+        resetTimer();
+        
+        // Reset scores and score histories
+        teams.a.score = 0;
+        teams.b.score = 0;
+        teams.a.scoreHistory = [];
+        teams.b.scoreHistory = [];
+        
+        // Reset mode to alternate
+        currentMode = 'alternate';
+        previousMode = 'alternate';
+        updateModeDisplay();
+        
+        // Update displays
+        updateScoreDisplay();
+        updateScoreHistoryDisplay();
+        saveToLocalStorage();
+        
+        showNotification('Match reset! All scores, histories, and timer cleared.');
+    }
+    
+    function setQuickPreset(minutes) {
+        stopTimer();
+        countdownTime = minutes * 60;
+        currentTime = countdownTime;
+        timerMode = 'countdown';
+        updateTimerDisplay();
+        saveToLocalStorage();
+        showNotification(`Timer set to ${minutes} minute${minutes > 1 ? 's' : ''}`);
+    }
+    
+    function updateTimerDisplay() {
+        const minutes = Math.floor(currentTime / 60);
+        const seconds = currentTime % 60;
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    function playTimeUpSound() {
+        // Visual notification
+        showNotification('Time\'s up!');
+        timerDisplay.classList.add('time-warning');
+        setTimeout(() => {
+            timerDisplay.classList.remove('time-warning');
+        }, 3000);
+    }
+    
+    // Score Functions with Mode-Dependent Logic
+    function updateScore(team, isPlus) {
+        if (currentMode === 'buzzer') {
+            // Buzzer mode: +2 or -2
+            const change = isPlus ? 2 : -2;
+            teams[team].score += change;
+            if (teams[team].score < 0) teams[team].score = 0;
+            teams[team].scoreHistory.push(teams[team].score);
+        } else {
+            // Alternate or Minute mode
+            if (isPlus) {
+                // Plus button: add 1 point
+                teams[team].score += 1;
+                teams[team].scoreHistory.push(teams[team].score);
+            } else {
+                // Minus button: carry forward (no change to score)
+                teams[team].scoreHistory.push(teams[team].score);
+            }
+        }
+        
+        updateScoreDisplay();
+        updateScoreHistoryDisplay();
+        saveToLocalStorage();
+        
+        // Visual feedback
+        const scoreElement = team === 'a' ? teamAScore : teamBScore;
+        scoreElement.classList.add('score-updated');
+        setTimeout(() => scoreElement.classList.remove('score-updated'), 300);
+    }
+    
+    function updateScoreDisplay() {
+        teamAScore.textContent = teams.a.score;
+        teamBScore.textContent = teams.b.score;
+    }
+    
+    function updateScoreHistoryDisplay() {
+        // Update Team A history
+        if (teams.a.scoreHistory.length > 0) {
+            teamAHistory.innerHTML = formatScoreHistory(teams.a.scoreHistory);
+            teamAHistory.classList.remove('empty');
+        } else {
+            teamAHistory.textContent = 'No score changes yet';
+            teamAHistory.classList.add('empty');
+        }
+        
+        // Update Team B history
+        if (teams.b.scoreHistory.length > 0) {
+            teamBHistory.innerHTML = formatScoreHistory(teams.b.scoreHistory);
+            teamBHistory.classList.remove('empty');
+        } else {
+            teamBHistory.textContent = 'No score changes yet';
+            teamBHistory.classList.add('empty');
+        }
+    }
+    
+    function formatScoreHistory(history) {
+        let formatted = '';
+        for (let i = 0; i < history.length; i++) {
+            if (history[i] === '---') {
+                formatted += '<span class="score-separator"></span>';
+            } else {
+                if (i > 0 && history[i - 1] !== '---') {
+                    formatted += ', ';
+                }
+                formatted += history[i];
+            }
+        }
+        return formatted;
+    }
+    
+    // Event Listeners - Timer Controls
+    startBtn.addEventListener('click', startTimer);
+    pauseBtn.addEventListener('click', pauseTimer);
+    stopBtn.addEventListener('click', stopTimer);
+    resetBtn.addEventListener('click', resetTimer);
+    resetAllBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to reset all scores and timer? This cannot be undone.')) {
+            resetAll();
+        }
+    });
+    
+    // Event Listeners - Quick Presets
+    preset4MinBtn.addEventListener('click', () => setQuickPreset(4));
+    preset1MinBtn.addEventListener('click', () => setQuickPreset(1));
+    
+    // Event Listeners - Score Buttons
+    teamAPlusBtn.addEventListener('click', () => updateScore('a', true));
+    teamAMinusBtn.addEventListener('click', () => updateScore('a', false));
+    teamBPlusBtn.addEventListener('click', () => updateScore('b', true));
+    teamBMinusBtn.addEventListener('click', () => updateScore('b', false));
+    
+    // Event Listeners - Export
+    exportResultsBtn.addEventListener('click', exportResults);
+    
+    // Configuration Functions
+    timerModeSelect.addEventListener('change', function() {
+        const countdownConfig = document.querySelector('.countdown-config');
+        if (this.value === 'countdown') {
+            countdownConfig.classList.add('active');
+        } else {
+            countdownConfig.classList.remove('active');
+        }
+    });
+    
+    // Player Management
+    addTeamAPlayerBtn.addEventListener('click', () => addPlayerInput('a'));
+    addTeamBPlayerBtn.addEventListener('click', () => addPlayerInput('b'));
+    
+    function addPlayerInput(team) {
+        const playersList = team === 'a' ? teamAPlayersList : teamBPlayersList;
+        
+        const playerInputGroup = document.createElement('div');
+        playerInputGroup.className = 'player-input-group';
+        
+        const playerInput = document.createElement('input');
+        playerInput.type = 'text';
+        playerInput.className = 'player-input';
+        playerInput.placeholder = 'Player name';
+        
+        const removeButton = document.createElement('button');
+        removeButton.className = 'remove-player-btn';
+        removeButton.innerHTML = '<i class="fas fa-times"></i>';
+        removeButton.addEventListener('click', () => {
+            playerInputGroup.remove();
+        });
+        
+        playerInputGroup.appendChild(playerInput);
+        playerInputGroup.appendChild(removeButton);
+        playersList.appendChild(playerInputGroup);
+    }
+    
+    // Initialize with one player input for each team
+    addPlayerInput('a');
+    addPlayerInput('b');
+    
+    function updatePlayersDisplay() {
+        // Update Team A players display
+        const teamAPlayersDisplay = document.getElementById('team-a-players-display');
+        teamAPlayersDisplay.innerHTML = '';
+        teams.a.players.forEach(player => {
+            const badge = document.createElement('div');
+            badge.className = 'player-badge';
+            badge.textContent = player;
+            teamAPlayersDisplay.appendChild(badge);
+        });
+        
+        // Update Team B players display
+        const teamBPlayersDisplay = document.getElementById('team-b-players-display');
+        teamBPlayersDisplay.innerHTML = '';
+        teams.b.players.forEach(player => {
+            const badge = document.createElement('div');
+            badge.className = 'player-badge';
+            badge.textContent = player;
+            teamBPlayersDisplay.appendChild(badge);
+        });
+    }
+    
+    // Save Configuration
+    saveConfigBtn.addEventListener('click', saveConfiguration);
+    
+    function saveConfiguration() {
+        // Get team names
+        teams.a.name = teamANameInput.value.trim() || 'Team A';
+        teams.b.name = teamBNameInput.value.trim() || 'Team B';
+        
+        // Get players
+        teams.a.players = [];
+        teams.b.players = [];
+        
+        const teamAInputs = teamAPlayersList.querySelectorAll('.player-input');
+        teamAInputs.forEach(input => {
+            const playerName = input.value.trim();
+            if (playerName) {
+                teams.a.players.push(playerName);
+            }
+        });
+        
+        const teamBInputs = teamBPlayersList.querySelectorAll('.player-input');
+        teamBInputs.forEach(input => {
+            const playerName = input.value.trim();
+            if (playerName) {
+                teams.b.players.push(playerName);
+            }
+        });
+        
+        // Get timer settings
+        timerMode = timerModeSelect.value;
+        const minutes = parseInt(countdownMinutes.value) || 0;
+        const seconds = parseInt(countdownSeconds.value) || 0;
+        countdownTime = (minutes * 60) + seconds;
+        
+        // Update UI
+        teamAName.textContent = teams.a.name;
+        teamBName.textContent = teams.b.name;
+        updatePlayersDisplay();
+        
+        // Reset timer if in countdown mode
+        if (timerMode === 'countdown') {
+            currentTime = countdownTime;
+        } else {
+            currentTime = 0;
+        }
+        updateTimerDisplay();
+        
+        // Save to localStorage
+        saveToLocalStorage();
+        
+        // Show confirmation
+        showNotification('Configuration saved successfully!');
+        
+        // Switch to timer tab
+        document.querySelector('.tab-btn[data-tab="timer-tab"]').click();
+    }
+    
+    function loadConfiguration() {
+        // Try to load from localStorage
+        const savedData = localStorage.getItem('quizCompetitionData');
+        
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            
+            // Load team data
+            if (data.teams) {
+                teams.a = data.teams.a;
+                teams.b = data.teams.b;
+                
+                // Ensure scoreHistory exists
+                if (!teams.a.scoreHistory) teams.a.scoreHistory = [];
+                if (!teams.b.scoreHistory) teams.b.scoreHistory = [];
+                
+                // Update UI
+                teamAName.textContent = teams.a.name;
+                teamBName.textContent = teams.b.name;
+                teamAScore.textContent = teams.a.score;
+                teamBScore.textContent = teams.b.score;
+                teamANameInput.value = teams.a.name;
+                teamBNameInput.value = teams.b.name;
+                
+                // Update players inputs
+                teamAPlayersList.innerHTML = '';
+                teamBPlayersList.innerHTML = '';
+                
+                if (teams.a.players.length > 0) {
+                    teams.a.players.forEach(player => {
+                        addPlayerInputWithValue('a', player);
+                    });
+                } else {
+                    addPlayerInput('a');
+                }
+                
+                if (teams.b.players.length > 0) {
+                    teams.b.players.forEach(player => {
+                        addPlayerInputWithValue('b', player);
+                    });
+                } else {
+                    addPlayerInput('b');
+                }
+                
+                // Update players display
+                updatePlayersDisplay();
+                
+                // Update score history display
+                updateScoreHistoryDisplay();
+            }
+            
+            // Load timer settings
+            if (data.timerSettings) {
+                timerMode = data.timerSettings.mode;
+                countdownTime = data.timerSettings.countdownTime;
+                currentTime = data.timerSettings.currentTime;
+                
+                timerModeSelect.value = timerMode;
+                countdownMinutes.value = Math.floor(countdownTime / 60);
+                countdownSeconds.value = countdownTime % 60;
+                
+                const countdownConfig = document.querySelector('.countdown-config');
+                countdownConfig.style.display = timerMode === 'countdown' ? 'block' : 'none';
+                
+                updateTimerDisplay();
+            }
+            
+            // Load mode state
+            if (data.currentMode) {
+                currentMode = data.currentMode;
+                previousMode = data.previousMode || currentMode;
+                updateModeDisplay();
+            }
+        }
+    }
+    
+    function addPlayerInputWithValue(team, value) {
+        const playersList = team === 'a' ? teamAPlayersList : teamBPlayersList;
+        
+        const playerInputGroup = document.createElement('div');
+        playerInputGroup.className = 'player-input-group';
+        
+        const playerInput = document.createElement('input');
+        playerInput.type = 'text';
+        playerInput.className = 'player-input';
+        playerInput.placeholder = 'Player name';
+        playerInput.value = value;
+        
+        const removeButton = document.createElement('button');
+        removeButton.className = 'remove-player-btn';
+        removeButton.innerHTML = '<i class="fas fa-times"></i>';
+        removeButton.addEventListener('click', () => {
+            playerInputGroup.remove();
+        });
+        
+        playerInputGroup.appendChild(playerInput);
+        playerInputGroup.appendChild(removeButton);
+        playersList.appendChild(playerInputGroup);
+    }
+    
+    function saveToLocalStorage() {
+        const data = {
+            teams: teams,
+            timerSettings: {
+                mode: timerMode,
+                countdownTime: countdownTime,
+                currentTime: currentTime
+            },
+            currentMode: currentMode,
+            previousMode: previousMode
+        };
+        
+        localStorage.setItem('quizCompetitionData', JSON.stringify(data));
+    }
+    
+    // Export Function
+    function exportResults() {
+        const now = new Date();
+        const dateString = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
+        const timeString = `${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}`;
+        
+        const exportFormat = document.getElementById('export-format').value;
+        let content;
+        let mimeType;
+        let fileExtension;
+        
+        // Helper function to format history without separators for export
+        function formatHistoryForExport(history) {
+            return history.filter(item => item !== '---').join(',');
+        }
+        
+        if (exportFormat === 'csv') {
+            // Create CSV content
+            content = 'Quiz Competition Results - ' + dateString + '\n\n';
+            
+            // Add team scores
+            content += `${teams.a.name},${teams.a.score}\n`;
+            content += `${teams.b.name},${teams.b.score}\n\n`;
+            
+            // Add score histories (without separators for CSV)
+            content += `${teams.a.name} Score History,${formatHistoryForExport(teams.a.scoreHistory)}\n`;
+            content += `${teams.b.name} Score History,${formatHistoryForExport(teams.b.scoreHistory)}\n\n`;
+            
+            // Add time information
+            if (timerMode === 'countdown') {
+                const remainingMinutes = Math.floor(currentTime / 60);
+                const remainingSeconds = currentTime % 60;
+                content += `Remaining Time,${remainingMinutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}\n\n`;
+            } else {
+                const elapsedMinutes = Math.floor(currentTime / 60);
+                const elapsedSeconds = currentTime % 60;
+                content += `Elapsed Time,${elapsedMinutes.toString().padStart(2, '0')}:${elapsedSeconds.toString().padStart(2, '0')}\n\n`;
+            }
+            
+            // Add team players
+            content += `${teams.a.name} Players\n`;
+            teams.a.players.forEach(player => {
+                content += player + '\n';
+            });
+            
+            content += `\n${teams.b.name} Players\n`;
+            teams.b.players.forEach(player => {
+                content += player + '\n';
+            });
+            
+            mimeType = 'text/csv;charset=utf-8;';
+            fileExtension = 'csv';
+        } else {
+            // Create JSON content
+            const jsonData = {
+                date: dateString,
+                time: timeString,
+                teams: {
+                    teamA: {
+                        name: teams.a.name,
+                        score: teams.a.score,
+                        players: teams.a.players,
+                        scoreHistory: teams.a.scoreHistory
+                    },
+                    teamB: {
+                        name: teams.b.name,
+                        score: teams.b.score,
+                        players: teams.b.players,
+                        scoreHistory: teams.b.scoreHistory
+                    }
+                },
+                timer: {
+                    mode: timerMode,
+                    currentTime: currentTime,
+                    formattedTime: timerMode === 'countdown' 
+                        ? `${Math.floor(currentTime / 60).toString().padStart(2, '0')}:${(currentTime % 60).toString().padStart(2, '0')}`
+                        : `${Math.floor(currentTime / 60).toString().padStart(2, '0')}:${(currentTime % 60).toString().padStart(2, '0')}`
+                },
+                currentRoundMode: currentMode
+            };
+            
+            content = JSON.stringify(jsonData, null, 2);
+            mimeType = 'application/json';
+            fileExtension = 'json';
+        }
+        
+        // Create download link
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `quiz_results_${dateString}_${timeString}.${fileExtension}`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showNotification('Results exported successfully!');
+    }
+    
+    // Utility Functions
+    function showNotification(message) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Add visible class with delay for animation
+        setTimeout(() => notification.classList.add('visible'), 10);
+        
+        // Remove after delay
+        setTimeout(() => {
+            notification.classList.remove('visible');
+            setTimeout(() => document.body.removeChild(notification), 300);
+        }, 3000);
+    }
+});
+
+// Add CSS for notifications (appended dynamically to avoid creating another CSS file)
+document.addEventListener('DOMContentLoaded', function() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .notification.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        .score-updated {
+            animation: pulse 0.3s ease;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .time-warning {
+            animation: blink 1s infinite;
+            color: #f44336 !important;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    `;
+    
+    document.head.appendChild(style);
+});  
+    </script>
+</body>
+</html>
