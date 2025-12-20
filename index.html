@@ -1359,7 +1359,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Buzzer mode: +2 or -2
             const change = isPlus ? 2 : -2;
             teams[team].score += change;
-            if (teams[team].score < 0) teams[team].score = 0;
+            // if (teams[team].score < 0) teams[team].score = 0;
             teams[team].scoreHistory.push(teams[team].score);
         } else {
             // Alternate or Minute mode
